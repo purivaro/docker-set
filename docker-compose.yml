@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+  php:
+    container_name: pack_php
+    build: php/
+    image: php:7.4.24-fpm-buster
+    restart: unless-stopped
+    volumes:
+      - ./www/:/var/www/html
+    expose:
+      - "9000"
+    depends_on:
+      - db
+
+  nginx:
+    container_name: pack_nginx
+    build: nginx/
+    image: nginx:stable-alpine
+    restart: unless-stopped
+    volumes:
+      - ./www/:/var/www/html
+
+      - ./nginx/conf/nginx.conf:/etc/nginx/conf/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    ports:
+      - "8080:80"
+
+  db:
+    container_name: pack_mysql
+    image: mysql
+    restart: unless-stopped
+    volumes:
+      - ./mysql/initdb/:/docker-entrypoint-initdb.d
+      - ./mysql/data/:/var/lib/mysql/
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=ibsdb
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+    ports:
+      - '3333:3306'
+
+networks:
+  default:
+    external:
+      name:
+        web_network
