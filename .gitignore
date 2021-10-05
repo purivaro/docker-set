@@ -1,5 +1,8 @@
 .DS_Store
 
 www/*
+!www/.gitkeep
 mysql/data/*
+!mysql/data/.gitkeep
 mysql/initdb/*
+!mysql/initdb/.gitkeep
